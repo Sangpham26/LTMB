@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "366378803059",
+    "project_id": "appnotegk",
+    "storage_bucket": "appnotegk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366378803059:android:c26a9a64a196a28bf2ef06",
+        "android_client_info": {
+          "package_name": "com.example.app_02"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt8fNw9Ko_eZHUFaOfFO3_1F8T15ZtFSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
