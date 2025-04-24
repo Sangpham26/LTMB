@@ -52,16 +52,15 @@ class NoteItem extends StatelessWidget {
     }
 
     // Tính độ sáng của màu nền để chọn màu chữ
-    final textColor = backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    final textColor =
+        backgroundColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
     // Giảm độ đậm của màu nền bằng cách thêm opacity
     final adjustedBackgroundColor = backgroundColor.withOpacity(0.87);
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(25),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       color: adjustedBackgroundColor, // Áp dụng màu nền đã điều chỉnh
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -128,7 +127,10 @@ class NoteItem extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(5),
@@ -193,23 +195,24 @@ class NoteItem extends StatelessWidget {
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Xác nhận xóa'),
-                          content: const Text('Bạn chắc chắn muốn xóa?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('Hủy'),
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Xác nhận xóa'),
+                              content: const Text('Bạn chắc chắn muốn xóa?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Hủy'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    onDelete();
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Xóa'),
+                                ),
+                              ],
                             ),
-                            TextButton(
-                              onPressed: () {
-                                onDelete();
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Xóa'),
-                            ),
-                          ],
-                        ),
                       );
                     },
                     padding: EdgeInsets.zero,

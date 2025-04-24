@@ -28,13 +28,17 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.note?.title ?? '');
-    _contentController = TextEditingController(text: widget.note?.content ?? '');
+    _contentController = TextEditingController(
+      text: widget.note?.content ?? '',
+    );
     _tagsController = TextEditingController();
     _priority = widget.note?.priority ?? 1;
     _tags = widget.note?.tags ?? [];
 
     if (widget.note?.color != null) {
-      _selectedColor = Color(int.parse('0xFF${widget.note!.color!.substring(1)}'));
+      _selectedColor = Color(
+        int.parse('0xFF${widget.note!.color!.substring(1)}'),
+      );
     }
   }
 
@@ -61,9 +65,9 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
         }
         Navigator.pop(context);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Lỗi khi lưu ghi chú: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi khi lưu ghi chú: $e')));
       }
     }
   }
@@ -125,13 +129,18 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF3A3A3A)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF3A3A3A),
+                          ),
                         ),
                         labelStyle: const TextStyle(color: Colors.black54),
                       ),
                       style: const TextStyle(color: Colors.black87),
-                      validator: (value) =>
-                      value == null || value.isEmpty ? 'Hãy nhập tiêu đề' : null,
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Hãy nhập tiêu đề'
+                                  : null,
                     ),
                   ),
                 ),
@@ -161,14 +170,19 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF3A3A3A)),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF3A3A3A),
+                          ),
                         ),
                         labelStyle: const TextStyle(color: Colors.black54),
                       ),
                       style: const TextStyle(color: Colors.black87),
                       maxLines: 10,
-                      validator: (value) =>
-                      value == null || value.isEmpty ? 'Hãy nhập nội dung' : null,
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Hãy nhập nội dung'
+                                  : null,
                     ),
                   ),
                 ),
@@ -201,24 +215,36 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
                             Radio<int>(
                               value: 1,
                               groupValue: _priority,
-                              onChanged: (value) => setState(() => _priority = value!),
+                              onChanged:
+                                  (value) => setState(() => _priority = value!),
                               activeColor: const Color(0xFF3A3A3A),
                             ),
-                            const Text('Thấp', style: TextStyle(color: Colors.black87)),
+                            const Text(
+                              'Thấp',
+                              style: TextStyle(color: Colors.black87),
+                            ),
                             Radio<int>(
                               value: 2,
                               groupValue: _priority,
-                              onChanged: (value) => setState(() => _priority = value!),
+                              onChanged:
+                                  (value) => setState(() => _priority = value!),
                               activeColor: const Color(0xFF3A3A3A),
                             ),
-                            const Text('Trung bình', style: TextStyle(color: Colors.black87)),
+                            const Text(
+                              'Trung bình',
+                              style: TextStyle(color: Colors.black87),
+                            ),
                             Radio<int>(
                               value: 3,
                               groupValue: _priority,
-                              onChanged: (value) => setState(() => _priority = value!),
+                              onChanged:
+                                  (value) => setState(() => _priority = value!),
                               activeColor: const Color(0xFF3A3A3A),
                             ),
-                            const Text('Cao', style: TextStyle(color: Colors.black87)),
+                            const Text(
+                              'Cao',
+                              style: TextStyle(color: Colors.black87),
+                            ),
                           ],
                         ),
                       ],
@@ -253,22 +279,25 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
                           onTap: () {
                             showDialog(
                               context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Chọn màu nền'),
-                                content: SingleChildScrollView(
-                                  child: BlockPicker(
-                                    pickerColor: _selectedColor,
-                                    onColorChanged: (color) =>
-                                        setState(() => _selectedColor = color),
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: const Text('Chọn màu nền'),
+                                    content: SingleChildScrollView(
+                                      child: BlockPicker(
+                                        pickerColor: _selectedColor,
+                                        onColorChanged:
+                                            (color) => setState(
+                                              () => _selectedColor = color,
+                                            ),
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Xong'),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Xong'),
-                                  ),
-                                ],
-                              ),
                             );
                           },
                           child: Container(
@@ -326,17 +355,25 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
                                   labelText: 'Thêm tag',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(color: Colors.black12),
+                                    borderSide: const BorderSide(
+                                      color: Colors.black12,
+                                    ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(color: Colors.black12),
+                                    borderSide: const BorderSide(
+                                      color: Colors.black12,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
-                                    borderSide: const BorderSide(color: Color(0xFF3A3A3A)),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFF3A3A3A),
+                                    ),
                                   ),
-                                  labelStyle: const TextStyle(color: Colors.black54),
+                                  labelStyle: const TextStyle(
+                                    color: Colors.black54,
+                                  ),
                                 ),
                                 style: const TextStyle(color: Colors.black87),
                               ),
@@ -346,7 +383,11 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
                               backgroundColor: const Color(0xFF3A3A3A),
                               radius: 18,
                               child: IconButton(
-                                icon: const Icon(Icons.add, color: Colors.white, size: 20),
+                                icon: const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                                 onPressed: () {
                                   if (_tagsController.text.trim().isNotEmpty) {
                                     setState(() {
@@ -363,16 +404,31 @@ class _NoteFormScreenState extends State<NoteFormScreen> {
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
-                          children: _tags.map((tag) => Chip(
-                            label: Text(
-                              tag,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: const Color(0xFF3A3A3A),
-                            deleteIcon: const Icon(Icons.close, size: 18, color: Colors.white70),
-                            onDeleted: () => setState(() => _tags.remove(tag)),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                          )).toList(),
+                          children:
+                              _tags
+                                  .map(
+                                    (tag) => Chip(
+                                      label: Text(
+                                        tag,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: const Color(0xFF3A3A3A),
+                                      deleteIcon: const Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: Colors.white70,
+                                      ),
+                                      onDeleted:
+                                          () =>
+                                              setState(() => _tags.remove(tag)),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                       ],
                     ),

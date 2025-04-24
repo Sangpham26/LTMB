@@ -1,19 +1,19 @@
 // Lớp Note đại diện cho một ghi chú trong ứng dụng
 class Note {
   // Các thuộc tính của ghi chú
-  final int? id;               // ID (nullable vì có thể chưa có khi tạo mới)
-  final String title;          // Tiêu đề ghi chú (bắt buộc)
-  final String content;        // Nội dung ghi chú (bắt buộc)
-  final int priority;          // Độ ưu tiên (1-3, bắt buộc)
-  final DateTime createdAt;    // Thời gian tạo (bắt buộc)
-  final DateTime modifiedAt;   // Thời gian chỉnh sửa (bắt buộc)
-  final List<String>? tags;    // Danh sách tags (có thể null)
-  final String? color;         // Mã màu (có thể null)
+  final int? id;               // ID 
+  final String title;          // Tiêu đề ghi chú 
+  final String content;        // Nội dung ghi chú 
+  final int priority;          // Độ ưu tiên 
+  final DateTime createdAt;    // Thời gian tạo 
+  final DateTime modifiedAt;   // Thời gian chỉnh sửa 
+  final List<String>? tags;    // Danh sách tags 
+  final String? color;         // Mã màu 
 
   // Constructor chính
   Note({
     this.id,
-    required this.title,      // required đảm bảo phải cung cấp giá trị
+    required this.title,     
     required this.content,
     required this.priority,
     required this.createdAt,
@@ -61,7 +61,7 @@ class Note {
     String? color,
   }) {
     return Note(
-      id: id ?? this.id,       // Sử dụng giá trị mới nếu có, ngược lại dùng giá trị hiện tại
+      id: id ?? this.id,
       title: title ?? this.title,
       content: content ?? this.content,
       priority: priority ?? this.priority,

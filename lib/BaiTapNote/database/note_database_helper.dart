@@ -1,122 +1,149 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import '../models/note.dart';
 
-// Lớp helper để quản lý tương tác với database SQLite
 class NoteDatabaseHelper {
-  // Singleton pattern - chỉ cho phép 1 instance duy nhất
-  static final NoteDatabaseHelper instance = NoteDatabaseHelper._init();
-  static Database? _database; // Biến lưu trữ database instance
+  static NoteDatabaseHelper? _instance; // Biến instance có thể thay đổi
+  static Database? _database;
+  static String? _currentUserId; // Lưu UID của người dùng hiện tại
 
-  // Constructor riêng tư để đảm bảo singleton
+  // Constructor riêng tư
   NoteDatabaseHelper._init();
 
-  // Getter để truy cập database (khởi tạo nếu chưa có)
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB('notes.db'); // Tạo database nếu chưa tồn tại
+  // Factory constructor để quản lý instance dựa trên người dùng
+  static NoteDatabaseHelper get instance {
+    // Phải được gọi sau khi người dùng đăng nhập và initializeForUser đã được gọi
+    if (_instance == null) {
+      throw Exception(
+        "NoteDatabaseHelper not initialized. Call initializeForUser first.",
+      );
+    }
+    return _instance!;
+  }
+
+  // Hàm khởi tạo helper cho một người dùng cụ thể
+  static Future<void> initializeForUser(String userId) async {
+    if (_database != null && _currentUserId == userId) {
+      return;
+    }
+
+    // Nếu đang mở database của người dùng khác, đóng nó lại
+    if (_database != null && _currentUserId != userId) {
+      await closeDatabase();
+    }
+
+    _currentUserId = userId;
+    _instance = NoteDatabaseHelper._init(); // Tạo instance mới (nếu cần)
+    // Khởi tạo database cho người dùng mới
+    _database = await _instance!._initDB('notes_$_currentUserId.db');
+    print("Database initialized for user: $_currentUserId");
+  }
+
+  // Hàm đóng database khi người dùng đăng xuất
+  static Future<void> closeDatabase() async {
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+      _currentUserId = null;
+      _instance = null; // Xóa instance
+      print("Database closed.");
+    }
+  }
+
+  // Getter để truy cập database
+  Future<Database> get _db async {
+    if (_database == null) {
+      throw Exception("Database is not initialized for the current user.");
+    }
     return _database!;
   }
 
-  // Hàm khởi tạo database
+  // Hàm khởi tạo database với tên file cụ thể
   Future<Database> _initDB(String fileName) async {
-    final dbPath = await getDatabasesPath(); // Lấy đường dẫn thư mục database
-    final path = join(dbPath, fileName); // Tạo full path đến file database
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, fileName);
+    print("Database path: $path"); // In đường dẫn để debug
 
-    // Mở hoặc tạo database
-    return await openDatabase(
-      path,
-      version: 1, // Phiên bản database
-      onCreate: _createDB, // Hàm callback khi tạo database mới
-    );
+    return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  // Hàm tạo bảng notes khi database được tạo lần đầu
+  // Hàm tạo bảng
   Future _createDB(Database db, int version) async {
     const noteTable = '''
-    CREATE TABLE notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT, // Khóa chính tự tăng
-      title TEXT NOT NULL,                 // Tiêu đề ghi chú (bắt buộc)
-      content TEXT NOT NULL,               // Nội dung ghi chú (bắt buộc)
-      priority INTEGER NOT NULL,           // Độ ưu tiên (1-3)
-      createdAt TEXT NOT NULL,             // Ngày tạo (dạng string)
-      modifiedAt TEXT NOT NULL,            // Ngày sửa (dạng string)
-      tags TEXT,                          // Danh sách tags (JSON string)
-      color TEXT                           // Mã màu (hex string)
-    )
-    ''';
-    await db.execute(noteTable); // Thực thi câu lệnh SQL
+      CREATE TABLE notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        priority INTEGER NOT NULL,
+        createdAt TEXT NOT NULL,
+        modifiedAt TEXT NOT NULL,
+        tags TEXT,
+        color TEXT
+      )
+      ''';
+    await db.execute(noteTable);
+    print("Table 'notes' created.");
   }
 
-  // Thêm một note mới vào database
+  // Các hàm CRUD (insert, getAll, getById, update, delete, search, getByPriority)
   Future<int> insertNote(Note note) async {
-    final db = await instance.database;
-    // Chuyển đổi note thành map và insert vào bảng notes
-    return await db.insert('notes', note.toMap());
+    final dbClient = await _db; // Sử dụng getter _db
+    return await dbClient.insert('notes', note.toMap());
   }
 
-  // Lấy tất cả notes từ database
   Future<List<Note>> getAllNotes() async {
-    final db = await instance.database;
-    final result = await db.query('notes'); // Query tất cả bản ghi
-    // Chuyển đổi từ map sang đối tượng Note
+    final dbClient = await _db;
+    final result = await dbClient.query(
+      'notes',
+      orderBy: 'modifiedAt DESC',
+    ); // Sắp xếp theo ngày sửa đổi gần nhất
     return result.map((map) => Note.fromMap(map)).toList();
   }
 
-  // Lấy note theo ID
   Future<Note?> getNoteById(int id) async {
-    final db = await instance.database;
-    // Query với điều kiện WHERE id = ?
-    final result = await db.query(
+    final dbClient = await _db;
+    final result = await dbClient.query(
       'notes',
       where: 'id = ?',
-      whereArgs: [id], // Thay thế ? bằng giá trị id
+      whereArgs: [id],
     );
-    // Trả về null nếu không tìm thấy
     return result.isNotEmpty ? Note.fromMap(result.first) : null;
   }
 
-  // Cập nhật note
   Future<int> updateNote(Note note) async {
-    final db = await instance.database;
-    // Cập nhật bản ghi có id trùng với note.id
-    return await db.update(
+    final dbClient = await _db;
+    return await dbClient.update(
       'notes',
-      note.toMap(), // Dữ liệu mới
+      note.toMap(),
       where: 'id = ?',
       whereArgs: [note.id],
     );
   }
 
-  // Xóa note
   Future<int> deleteNote(int id) async {
-    final db = await instance.database;
-    // Xóa bản ghi có id trùng với id truyền vào
-    return await db.delete(
-      'notes',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final dbClient = await _db;
+    return await dbClient.delete('notes', where: 'id = ?', whereArgs: [id]);
   }
 
-  // Lấy danh sách note theo độ ưu tiên
   Future<List<Note>> getNotesByPriority(int priority) async {
-    final db = await instance.database;
-    final result = await db.query(
+    final dbClient = await _db;
+    final result = await dbClient.query(
       'notes',
       where: 'priority = ?',
       whereArgs: [priority],
+      orderBy: 'modifiedAt DESC',
     );
     return result.map((map) => Note.fromMap(map)).toList();
   }
 
-  // Tìm kiếm note theo từ khóa trong tiêu đề hoặc nội dung
   Future<List<Note>> searchNotes(String query) async {
-    final db = await instance.database;
-    final result = await db.query(
+    final dbClient = await _db;
+    final result = await dbClient.query(
       'notes',
-      where: 'title LIKE ? OR content LIKE ?', // Tìm kiếm trong cả tiêu đề và nội dung
-      whereArgs: ['%$query%', '%$query%'], // Sử dụng % để tìm kiếm phần chứa
+      where: 'title LIKE ? OR content LIKE ?',
+      whereArgs: ['%$query%', '%$query%'],
+      orderBy: 'modifiedAt DESC',
     );
     return result.map((map) => Note.fromMap(map)).toList();
   }

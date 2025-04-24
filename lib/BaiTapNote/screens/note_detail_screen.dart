@@ -23,7 +23,6 @@ class NoteDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define common styling constants
     const double cardElevation = 2.0;
     const double borderRadius = 12.0;
     const double sectionSpacing = 16.0;
@@ -33,10 +32,7 @@ class NoteDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Chi tiết',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Chi tiết', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF3A3A3A),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
@@ -57,7 +53,9 @@ class NoteDetailScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(sectionSpacing),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch, // Đảm bảo các phần tử trải rộng hết chiều ngang
+            crossAxisAlignment:
+                CrossAxisAlignment
+                    .stretch, // Đảm bảo các phần tử trải rộng hết chiều ngang
             children: [
               // Title Section
               Card(
@@ -77,48 +75,6 @@ class NoteDetailScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: sectionSpacing),
-
-              // Metadata Section
-              Card(
-                elevation: cardElevation,
-                color: cardBackground,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  side: const BorderSide(color: borderColor),
-                ),
-                child: Container(
-                  width: double.infinity, // Đảm bảo chiều rộng tối đa
-                  padding: const EdgeInsets.all(innerPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Priority
-                      _buildMetadataRow(
-                        icon: Icons.priority_high,
-                        iconColor: Colors.red,
-                        text: 'Độ ưu tiên: ${_getPriorityText(note.priority)}',
-                      ),
-                      const SizedBox(height: innerPadding),
-
-                      // Created At
-                      _buildMetadataRow(
-                        icon: Icons.calendar_today,
-                        iconColor: Colors.blue,
-                        text: 'Ngày tạo: ${note.createdAt.toString().substring(0, 16)}',
-                      ),
-                      const SizedBox(height: innerPadding),
-
-                      // Modified At
-                      _buildMetadataRow(
-                        icon: Icons.edit,
-                        iconColor: Colors.green,
-                        text: 'Sửa đổi: ${note.modifiedAt.toString().substring(0, 16)}',
-                      ),
-                    ],
                   ),
                 ),
               ),
@@ -188,17 +144,64 @@ class NoteDetailScreen extends StatelessWidget {
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
-                          children: note.tags!.map((tag) {
-                            return Chip(
-                              label: Text(tag),
-                              backgroundColor: const Color(0xFF3A3A3A),
-                              labelStyle: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                            );
-                          }).toList(),
+                          children:
+                              note.tags!.map((tag) {
+                                return Chip(
+                                  label: Text(tag),
+                                  backgroundColor: const Color(0xFF3A3A3A),
+                                  labelStyle: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: sectionSpacing),
+                // Metadata Section
+                Card(
+                  elevation: cardElevation,
+                  color: cardBackground,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(borderRadius),
+                    side: const BorderSide(color: borderColor),
+                  ),
+                  child: Container(
+                    width: double.infinity, // Đảm bảo chiều rộng tối đa
+                    padding: const EdgeInsets.all(innerPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Priority
+                        _buildMetadataRow(
+                          icon: Icons.priority_high,
+                          iconColor: Colors.red,
+                          text:
+                              'Độ ưu tiên: ${_getPriorityText(note.priority)}',
+                        ),
+                        const SizedBox(height: innerPadding),
+
+                        // Created At
+                        _buildMetadataRow(
+                          icon: Icons.calendar_today,
+                          iconColor: Colors.blue,
+                          text:
+                              'Ngày tạo: ${note.createdAt.toString().substring(0, 16)}',
+                        ),
+                        const SizedBox(height: innerPadding),
+
+                        // Modified At
+                        _buildMetadataRow(
+                          icon: Icons.edit,
+                          iconColor: Colors.green,
+                          text:
+                              'Sửa đổi: ${note.modifiedAt.toString().substring(0, 16)}',
                         ),
                       ],
                     ),
@@ -227,10 +230,7 @@ class NoteDetailScreen extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black54,
-            ),
+            style: const TextStyle(fontSize: 16, color: Colors.black54),
           ),
         ),
       ],
